@@ -417,7 +417,7 @@ def main():
     )
     parser.add_argument(
         "--output_dir",
-        default='./models/bert',
+        default='./ckpts/bert',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -441,7 +441,7 @@ def main():
     )
     parser.add_argument(
         "--cache_dir",
-        default="./models/bert/cache",
+        default="./ckpts/bert/cache",
         type=str,
         help="Where do you want to store the pre-trained models downloaded from s3",
     )
@@ -454,7 +454,7 @@ def main():
     )
     parser.add_argument("--do_train",default=True, action="store_true", help="Whether to run training.")
     parser.add_argument("--do_eval",default=True, action="store_true", help="Whether to run eval on the dev set.")
-    parser.add_argument("--do_predict", action="store_true", help="Whether to run predictions on the test set.")
+    parser.add_argument("--do_predict",default=True  , action="store_true", help="Whether to run predictions on the test set.")
     parser.add_argument(
         "--evaluate_during_training",
         action="store_true",
@@ -464,9 +464,9 @@ def main():
         "--do_lower_case", action="store_true", help="Set this flag if you are using an uncased model."
     )
 
-    parser.add_argument("--per_gpu_train_batch_size", default=8, type=int, help="Batch size per GPU/CPU for training.")
+    parser.add_argument("--per_gpu_train_batch_size", default=16, type=int, help="Batch size per GPU/CPU for training.")
     parser.add_argument(
-        "--per_gpu_eval_batch_size", default=8, type=int, help="Batch size per GPU/CPU for evaluation."
+        "--per_gpu_eval_batch_size", default=16, type=int, help="Batch size per GPU/CPU for evaluation."
     )
     parser.add_argument(
         "--gradient_accumulation_steps",
