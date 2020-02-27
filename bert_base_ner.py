@@ -157,17 +157,6 @@ def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
     global_step = 0
     epochs_trained = 0
     steps_trained_in_current_epoch = 0
-    # Check if continuing training from a checkpoint
-    # if os.path.exists(args.model_name_or_path):
-    #     # set global_step to gobal_step of last saved checkpoint from model path
-    #     global_step = int(args.model_name_or_path.split("-")[-1].split("/")[0])
-    #     epochs_trained = global_step // (len(train_dataloader) // args.gradient_accumulation_steps)
-    #     steps_trained_in_current_epoch = global_step % (len(train_dataloader) // args.gradient_accumulation_steps)
-    #
-    #     logger.info("  Continuing training from checkpoint, will skip to saved global_step")
-    #     logger.info("  Continuing training from epoch %d", epochs_trained)
-    #     logger.info("  Continuing training from global step %d", global_step)
-    #     logger.info("  Will skip the first %d steps in the first epoch", steps_trained_in_current_epoch)
 
     tr_loss, logging_loss = 0.0, 0.0
     model.zero_grad()
@@ -193,7 +182,7 @@ def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
                 )  # XLM and RoBERTa don"t use segment_ids
 
             outputs = model(**inputs)
-            loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
+            loss = outputs[0]
 
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training
@@ -461,7 +450,7 @@ def main():
         help="Whether to run evaluation during training at each logging step.",
     )
     parser.add_argument(
-        "--do_lower_case", action="store_true", help="Set this flag if you are using an uncased model."
+        "--do_lower_case",default=True, action="store_true", help="Set this flag if you are using an uncased model."
     )
 
     parser.add_argument("--per_gpu_train_batch_size", default=16, type=int, help="Batch size per GPU/CPU for training.")
@@ -474,12 +463,12 @@ def main():
         default=1,
         help="Number of updates steps to accumulate before performing a backward/update pass.",
     )
-    parser.add_argument("--learning_rate", default=5e-5, type=float, help="The initial learning rate for Adam.")
+    parser.add_argument("--learning_rate", default=5e-4, type=float, help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=0.0, type=float, help="Weight decay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float, help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float, help="Max gradient norm.")
     parser.add_argument(
-        "--num_train_epochs", default=1.0, type=float, help="Total number of training epochs to perform."
+        "--num_train_epochs", default=3.0, type=float, help="Total number of training epochs to perform."
     )
     parser.add_argument(
         "--max_steps",
@@ -572,10 +561,9 @@ def main():
     # Set seed
     set_seed(args)
 
-    # Prepare CONLL-2003 task
     labels = get_labels(args.labels)
     num_labels = len(labels)
-    # Use cross entropy ignore index as padding label id so that only real label ids contribute to the loss later
+    # 交叉熵损失函数忽略计算的-100做为label id的pad token，计算损失时不计入
     pad_token_label_id = CrossEntropyLoss().ignore_index
 
     # Load pretrained model and tokenizer
