@@ -78,7 +78,7 @@ class Metrics(object):
             len(O_tag_indices) / length * 100
         ))
 
-    def report_scores(self):
+    def report_scores(self,dtype='HMM'):
         """将结果用表格的形式打印出来，像这个样子：
 
                       precision    recall  f1-score   support
@@ -96,28 +96,53 @@ class Metrics(object):
         # 打印表头
         header_format = '{:>9s}  {:>9} {:>9} {:>9} {:>9}'
         header = ['precision', 'recall', 'f1-score', 'support']
-        print(header_format.format('', *header))
+        with open('result.txt','a') as fout:
+            fout.write('\n')
+            fout.write('=========='*10)
+            fout.write('\n')
+            fout.write('模型：{}，test结果如下：'.format(dtype))
+            fout.write('\n')
+            fout.write(header_format.format('', *header))
+            print(header_format.format('', *header))
 
-        row_format = '{:>9s}  {:>9.4f} {:>9.4f} {:>9.4f} {:>9}'
-        # 打印每个标签的 精确率、召回率、f1分数
-        for tag in self.tagset:
+            row_format = '{:>9s}  {:>9.4f} {:>9.4f} {:>9.4f} {:>9}'
+            # 打印每个标签的 精确率、召回率、f1分数
+            for tag in self.tagset:
+                print(row_format.format(
+                    tag,
+                    self.precision_scores[tag],
+                    self.recall_scores[tag],
+                    self.f1_scores[tag],
+                    self.golden_tags_count[tag]
+                ))
+                fout.write('\n')
+                fout.write(row_format.format(
+                    tag,
+                    self.precision_scores[tag],
+                    self.recall_scores[tag],
+                    self.f1_scores[tag],
+                    self.golden_tags_count[tag]
+                ))
+
+            # 计算并打印平均值
+            avg_metrics = self._cal_weighted_average()
             print(row_format.format(
-                tag,
-                self.precision_scores[tag],
-                self.recall_scores[tag],
-                self.f1_scores[tag],
-                self.golden_tags_count[tag]
+                'avg/total',
+                avg_metrics['precision'],
+                avg_metrics['recall'],
+                avg_metrics['f1_score'],
+                len(self.golden_tags)
             ))
+            fout.write('\n')
+            fout.write(row_format.format(
+                'avg/total',
+                avg_metrics['precision'],
+                avg_metrics['recall'],
+                avg_metrics['f1_score'],
+                len(self.golden_tags)
+            ))
+            fout.write('\n')
 
-        # 计算并打印平均值
-        avg_metrics = self._cal_weighted_average()
-        print(row_format.format(
-            'avg/total',
-            avg_metrics['precision'],
-            avg_metrics['recall'],
-            avg_metrics['f1_score'],
-            len(self.golden_tags)
-        ))
 
     def _cal_weighted_average(self):
 

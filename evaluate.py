@@ -23,7 +23,7 @@ def hmm_train_eval(train_data,test_data,word2id,tag2id,remove_0=False):
     # 模型评估
     pred_tag_lists = hmm_model.test(test_word_lists,word2id,tag2id)
     metrics = Metrics(test_tag_lists,pred_tag_lists)
-    metrics.report_scores()
+    metrics.report_scores(dtype='HMM')
 
     return pred_tag_lists
 
@@ -39,7 +39,7 @@ def crf_train_eval(train_data,test_data,remove_0=False):
     pred_tag_lists = crf_model.test(test_word_lists)
 
     metrics = Metrics(test_tag_lists,pred_tag_lists)
-    metrics.report_scores()
+    metrics.report_scores(dtype='CRF')
 
     return pred_tag_lists
 
@@ -72,7 +72,8 @@ def bilstm_train_and_eval(train_data,dev_data,test_data,word2id,tag2id,crf=True,
         test_word_lists, test_tag_lists, word2id, tag2id)
 
     metrics = Metrics(test_tag_lists, pred_tag_lists, remove_0=remove_0)
-    metrics.report_scores()
+    dtype = 'Bi_LSTM+CRF' if crf else 'Bi_LSTM'
+    metrics.report_scores(dtype=dtype)
 
     return pred_tag_lists
 

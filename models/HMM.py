@@ -33,6 +33,7 @@ class HMM(object):
         assert len(word_lists) == len(tag_lists)
 
         # 估计状态转移概率矩阵A
+        # HMM的一个假设：齐次马尔科夫假设即任意时刻的隐藏状态只依赖以前一个隐藏状态
         for tag_list in tag_lists:
             seq_len = len(tag_list)
             for i in range(seq_len-1):
@@ -45,6 +46,7 @@ class HMM(object):
         self.A = self.A / torch.sum(self.A,dim=1,keepdim=True)
 
         # 估计观测概率矩阵
+        # 观测独立假设，即当前的观测值只依赖以当前的隐藏状态
         for tag_list,word_list in zip(tag_lists,word_lists):
             assert len(tag_list)==len(word_list)
             for tag,word in zip(tag_list,word_list):
@@ -63,7 +65,7 @@ class HMM(object):
 
     def decoding(self,word_list,word2id,tag2id):
         """
-        使用维特比算法对给定观测序列求状态序列， 这里就是对字组成的序列,求其对应的标注。
+        使用维特比算法对给定观测序列求隐状态序列， 这里就是对字组成的序列,求其对应的实体标注。
         维特比算法实际是用动态规划解隐马尔可夫模型预测问题，即用动态规划求概率最大路径（最优路径）
         这时一条路径对应着一个状态序列
         """

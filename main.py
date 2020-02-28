@@ -19,8 +19,8 @@ def main():
     #     word2id,
     #     tag2id
     # )
-
-    # 训练并评估crf模型
+    #
+    # # 训练并评估crf模型
     # crf_pred = crf_train_eval(
     #     (train_word_lists,train_tag_lists),
     #     (test_word_lists,test_tag_lists)
