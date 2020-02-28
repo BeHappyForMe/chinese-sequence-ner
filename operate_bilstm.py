@@ -161,19 +161,3 @@ class BiLSTM_operator(object):
 
         return pred_tag_lists, tag_lists
 
-
-
-
-labels = torch.randn(10,5)
-logits = torch.randn(10,5,3)
-attention_mask = torch.ones(10,5)
-attention_mask[:,3:]=0
-print(attention_mask)
-print("----"*20)
-active_loss = attention_mask.view(-1) == 1
-print(active_loss)
-active_logits = logits.view(-1, 3)[active_loss]
-print(active_logits.shape)
-active_labels = labels.view(-1)[active_loss]
-print(active_labels.shape)
-
