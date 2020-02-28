@@ -4,7 +4,7 @@ class TrainingConfig(object):
     # 学习速率
     lr = 0.001
     epoches = 5
-    print_step = 500
+    print_step = 100
 
 
 class LSTMConfig(object):

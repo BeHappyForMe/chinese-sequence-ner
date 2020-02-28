@@ -3,12 +3,11 @@ from collections import Counter
 import pickle
 
 from models.HMM import HMM
-from models.HMM_t1 import HMM1
 from models.CRF import CRFModel
 from evaluating import Metrics
 from operate_bilstm import BiLSTM_operator
 
-from utils import save_model
+from utils import save_model,flatten_lists
 
 def hmm_train_eval(train_data,test_data,word2id,tag2id,remove_0=False):
     """hmm模型的评估与训练"""
@@ -77,3 +76,21 @@ def bilstm_train_and_eval(train_data,dev_data,test_data,word2id,tag2id,crf=True,
 
     return pred_tag_lists
 
+
+def ensemble_evaluate(results, targets, remove_O=False):
+    """ensemble多个模型"""
+    for i in range(len(results)):
+        results[i] = flatten_lists(results[i])
+
+    pred_tags = []
+    for result in zip(*results):
+        ensemble_tag = Counter(result).most_common(1)[0][0]
+        pred_tags.append(ensemble_tag)
+
+    targets = flatten_lists(targets)
+    assert len(pred_tags) == len(targets)
+
+    print("Ensemble 四个模型的结果如下：")
+    metrics = Metrics(targets, pred_tags, remove_0=remove_O)
+    metrics.report_scores(dtype='ensembel')
+    # metrics.report_confusion_matrix()

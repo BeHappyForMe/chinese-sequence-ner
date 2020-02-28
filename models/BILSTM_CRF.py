@@ -132,6 +132,7 @@ def cal_lstm_crf_loss(crf_scores, targets, tag2id):
     flatten_scores = crf_scores.masked_select(
         mask.view(batch_size, max_len, 1, 1).expand_as(crf_scores)
     ).view(-1, target_size*target_size).contiguous()
+    # 【batch*seq-masklen， target*target】
 
     golden_scores = flatten_scores.gather(
         dim=1, index=targets.unsqueeze(1)).sum()
