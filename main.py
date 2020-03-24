@@ -11,22 +11,22 @@ def main():
     dev_word_lists,dev_tag_lists = build_corpus("dev",make_vocab=False)
     test_word_lists,test_tag_lists = build_corpus("test",make_vocab=False)
 
-    # 训练并评估hmm模型
-    # print("正在训练评估HMM模型")
+    #训练并评估hmm模型
+    print("正在训练评估HMM模型")
     hmm_pred = hmm_train_eval(
         (train_word_lists,train_tag_lists),
         (test_word_lists,test_tag_lists),
         word2id,
         tag2id
     )
-    #
-    # # 训练并评估crf模型
+
+    # 训练并评估crf模型
     crf_pred = crf_train_eval(
         (train_word_lists,train_tag_lists),
         (test_word_lists,test_tag_lists)
     )
 
-    # 训练并评估bilstm模型
+    #训练并评估bilstm模型
     bilstm_word2id, bilstm_tag2id = extend_maps(word2id, tag2id, for_crf=False)
     lstm_pred = bilstm_train_and_eval(
         (train_word_lists, train_tag_lists),

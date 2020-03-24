@@ -20,10 +20,11 @@ class BiLSTM_CRF(nn.Module):
         self.transition = nn.Parameter(torch.ones(out_size,out_size) * 1 / out_size)
 
     def forward(self,sents_tensor,lengths):
+        # B, L, out_size
         emission = self.bilstm(sents_tensor,lengths)
 
         # 计算CRF scores, 这个scores大小为[B, L, out_size, out_size]
-        # 也就是每个字对应对应一个 [out_size, out_size]的矩阵
+        # 也就是每个字对应一个 [out_size, out_size]的矩阵
         # 这个矩阵第i行第j列的元素的含义是：上一时刻tag为i，这一时刻tag为j的分数
         batch_size,max_len,out_size = emission.size()
         crf_scores = emission.unsqueeze(2).expand(-1,-1,out_size,-1) + self.transition.unsqueeze(0)
@@ -76,8 +77,7 @@ class BiLSTM_CRF(nn.Module):
             else:
                 prev_batch_size_t = len(tags_t)
 
-                new_in_batch = torch.LongTensor(
-                    [end_id] * (batch_size_t - prev_batch_size_t)).to(device)
+                new_in_batch = torch.LongTensor([end_id] * (batch_size_t - prev_batch_size_t)).to(device)
                 offset = torch.cat(
                     [tags_t, new_in_batch],
                     dim=0
@@ -127,7 +127,7 @@ def cal_lstm_crf_loss(crf_scores, targets, tag2id):
     # # 计算Golden scores方法１
     # import pdb
     # pdb.set_trace()
-    targets = targets.masked_select(mask)  # [real_L]
+    targets = targets.masked_select(mask)  # [batch*seq-masklen]
 
     flatten_scores = crf_scores.masked_select(
         mask.view(batch_size, max_len, 1, 1).expand_as(crf_scores)
