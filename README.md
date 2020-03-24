@@ -5,7 +5,7 @@
 命名实体识别作为序列标注类的典型任务，其使用场景特别广泛。本文基于PyTorch搭建**HMM、CRF、BiLSTM、BiLSTM+CRF及BERT**模型，实现中文命名识别任务。
 
 其中HMM、CRF、BiLSTM和BiLSTM+CRF模型文件在models文件夹下，训练文件融合在main.py中，并做了比较及集成。BERT模型使用
-huggingface提供的transformers实现，预训练模型使用哈工大讯飞开源的<a href="https://github.com/microsoft/unilm" target="_blank">中文BERT-wwwm</a>，模型训练
+huggingface提供的transformers实现，预训练模型使用哈工大讯飞开源的<a href="https://github.com/ymcui/Chinese-BERT-wwm" target="_blank">中文BERT-wwwm</a>，模型训练
 代码在bert_base_ner.py文件中
 
 ### HMM
